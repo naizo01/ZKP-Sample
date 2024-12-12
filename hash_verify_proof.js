@@ -2,9 +2,9 @@ const snarkjs = require("snarkjs");
 const fs = require("fs");
 
 async function main() {
-  const vKey = JSON.parse(fs.readFileSync("build/json/verification_key.json"));
-  const proof = JSON.parse(fs.readFileSync("build/json/proof.json"));
-  const publicSignals = JSON.parse(fs.readFileSync("build/json/public.json"));
+  const vKey = JSON.parse(fs.readFileSync("build/json/hash_verification_key.json"));
+  const proof = JSON.parse(fs.readFileSync("build/json/hash_proof.json"));
+  const publicSignals = JSON.parse(fs.readFileSync("build/json/hash_public.json"));
 
   const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
 

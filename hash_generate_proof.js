@@ -9,8 +9,8 @@ async function main() {
         "build/zkey/poseidon_hash.zkey"
     );
 
-    fs.writeFileSync("build/json/proof.json", JSON.stringify(proof));
-    fs.writeFileSync("build/json/public.json", JSON.stringify(publicSignals));
+    fs.writeFileSync("build/json/hash_proof.json", JSON.stringify(proof));
+    fs.writeFileSync("build/json/hash_public.json", JSON.stringify(publicSignals));
 
     console.log("Generated Proof:", proof);
     console.log("Public Signals:", publicSignals);

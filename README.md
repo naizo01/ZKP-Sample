@@ -114,7 +114,7 @@ mkdir -p build/json
 
 ### 証明の生成
 
-`generate_proof.js`を作成：
+`hash_generate_proof.js`を作成：
 
 ```javascript
 const snarkjs = require("snarkjs");
@@ -129,8 +129,8 @@ async function main() {
   );
 
   // JSONファイルを build/json ディレクトリに保存
-  fs.writeFileSync("build/json/proof.json", JSON.stringify(proof));
-  fs.writeFileSync("build/json/public.json", JSON.stringify(publicSignals));
+  fs.writeFileSync("build/json/hash_proof.json", JSON.stringify(proof));
+  fs.writeFileSync("build/json/hash_public.json", JSON.stringify(publicSignals));
 
   console.log("Generated Proof:", proof);
   console.log("Public Signals:", publicSignals);
@@ -158,33 +158,33 @@ main()
 proof 生成を実行：
 
 ```bash
-node generate_proof.js
+node hash_generate_proof.js
 ```
 
 ### 検証キーの生成と検証用 Solidity コードの生成
 
 検証キーの生成：
 ```bash
-npx snarkjs zkey export verificationkey build/zkey/poseidon_hash.zkey build/json/verification_key.json
+npx snarkjs zkey export verificationkey build/zkey/poseidon_hash.zkey build/json/hash_verification_key.json
 ```
 
 Solidity検証コントラクトの生成：
 ```bash
-npx snarkjs zkey export solidityverifier build/zkey/poseidon_hash.zkey PoseidonHashVerifier.sol
+npx snarkjs zkey export solidityverifier build/zkey/poseidon_hash.zkey src/PoseidonHashVerifier.sol
 ```
 
 ### 証明の検証
 
-`verify_proof.js`を作成：
+`hash_verify_proof.js`を作成：
 
 ```javascript
 const snarkjs = require("snarkjs");
 const fs = require("fs");
 
 async function main() {
-  const vKey = JSON.parse(fs.readFileSync("build/json/verification_key.json"));
-  const proof = JSON.parse(fs.readFileSync("build/json/proof.json"));
-  const publicSignals = JSON.parse(fs.readFileSync("build/json/public.json"));
+  const vKey = JSON.parse(fs.readFileSync("build/json/hash_verification_key.json"));
+  const proof = JSON.parse(fs.readFileSync("build/json/hash_proof.json"));
+  const publicSignals = JSON.parse(fs.readFileSync("build/json/hash_public.json"));
 
   const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
 
@@ -208,7 +208,7 @@ main()
 検証を実行：
 
 ```bash
-node verify_proof.js
+node hash_verify_proof.js
 ```
 
 ## まとめ
