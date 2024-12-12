@@ -5,8 +5,8 @@ async function main() {
     // 入力値10に対する証明を生成
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(
         { in: 10 }, 
-        "build/poseidon_hash_js/poseidon_hash.wasm", 
-        "build/zkey/poseidon_hash.zkey"
+        "build/hash_poseidon_js/hash_poseidon.wasm", 
+        "build/zkey/hash_poseidon.zkey"
     );
 
     fs.writeFileSync("build/json/hash_proof.json", JSON.stringify(proof));

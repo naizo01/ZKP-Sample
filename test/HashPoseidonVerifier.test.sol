@@ -2,9 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import "../src/PoseidonHashVerifier.sol";
+import "../src/HashPoseidonVerifier.sol";
 
-contract PoseidonHashVerifierTest is Test {
+contract HashPoseidonVerifierTest is Test {
     Groth16Verifier public verifier;
 
     struct ZKProof {

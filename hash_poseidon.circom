@@ -2,7 +2,7 @@ pragma circom 2.0.0;
 include "node_modules/circomlib/circuits/poseidon.circom";
 
 // 入力値のPoseidonハッシュを計算する回路
-template PoseidonHash() {
+template HashPoseidon() {
     // 入力値
     signal input in;
     // 計算されたハッシュ値
@@ -15,4 +15,4 @@ template PoseidonHash() {
 }
 
 // メインコンポーネントとして回路を定義
-component main = PoseidonHash();
+component main = HashPoseidon();
