@@ -1,4 +1,4 @@
-# JavaScript での zk-SNARK・Circom・snark.js 入門
+# ZK-SNARKs実践入門 - Circomとsnarkjsによるゼロ知識証明の実装
 
 ## はじめに
 
@@ -129,10 +129,9 @@ async function main() {
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     { in: 10 },
     "build/hash_poseidon_js/hash_poseidon.wasm",
-    "circuit_0000.zkey"
+    "build/zkey/hash_poseidon.zkey"
   );
 
-  // JSONファイルを build/json ディレクトリに保存
   fs.writeFileSync("build/json/hash_proof.json", JSON.stringify(proof));
   fs.writeFileSync(
     "build/json/hash_public.json",
@@ -286,6 +285,9 @@ node hash_verify_proof.js
    }
    ```
 
+- ZKProof には、`exportSolidityCallData`関数で生成されたものを記述します。
+- proof の内容は毎回変わります。
+
 2. **テストを実行**:
    Foundry でテストを実行します。
 
@@ -302,7 +304,7 @@ pragma circom 2.0.0;
 
 include "node_modules/circomlib/circuits/poseidon.circom";
 
-template HashPoseidoner() {
+template PasswordCheck() {
     signal input in;      // プライベート入力（パスワード）
     signal input hash;    // パブリック入力（ハッシュ値）
 
@@ -312,7 +314,7 @@ template HashPoseidoner() {
 }
 
 // hashをパブリック入力として指定
-component main {public [hash]} = HashPoseidoner();
+component main {public [hash]} = PasswordCheck();
 ```
 
 この回路の特徴：
@@ -338,7 +340,8 @@ circom password_check.circom --wasm --r1cs -o ./build
 ```bash
 npx snarkjs groth16 setup build/password_check.r1cs powersOfTau28_hez_final_12.ptau build/zkey/password_check.zkey
 ```
-circomlibjsをインストール：
+
+circomlibjs をインストール：
 
 ```bash
 npm i circomlibjs
@@ -348,17 +351,16 @@ npm i circomlibjs
 
 ```javascript
 const snarkjs = require("snarkjs");
+const circomlibjs = require("circomlibjs");
 const fs = require("fs");
 
 async function main() {
-  // パスワード「password123」に対する証明を生成
-  const input = {
-    in: "password123",
-    hash: "16657544396277680557318652744225571850445038575627796611477836423571712086961", // パスワードのハッシュ値
-  };
+  const input = 123456789;
+  const poseidon = await circomlibjs.buildPoseidon();
+  const hash = poseidon.F.toString(poseidon([input]));
 
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
-    input,
+    { in: input, hash: hash },
     "build/password_check_js/password_check.wasm",
     "build/zkey/password_check.zkey"
   );
@@ -371,6 +373,13 @@ async function main() {
 
   console.log("Generated Proof:", proof);
   console.log("Public Signals:", publicSignals);
+
+  // Solidity用のコールデータを生成
+  const calldata = await snarkjs.groth16.exportSolidityCallData(
+    proof,
+    publicSignals
+  );
+  console.log("Solidity Calldata:", calldata);
 }
 
 main()

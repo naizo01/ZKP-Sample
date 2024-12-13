@@ -3,11 +3,11 @@ const fs = require("fs");
 
 async function main() {
   const vKey = JSON.parse(
-    fs.readFileSync("build/json/hash_verification_key.json")
+    fs.readFileSync("build/json/password_verification_key.json")
   );
-  const proof = JSON.parse(fs.readFileSync("build/json/hash_proof.json"));
+  const proof = JSON.parse(fs.readFileSync("build/json/password_proof.json"));
   const publicSignals = JSON.parse(
-    fs.readFileSync("build/json/hash_public.json")
+    fs.readFileSync("build/json/password_public.json")
   );
 
   const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
